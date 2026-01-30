@@ -23,7 +23,7 @@
     </div>
 
     <script>
-        const roomId = 1; // 테스트용 1번 방 고정 (DB에 room_id 1이 있어야 함)
+        const roomId = window.location.pathname.split('/').pop();
 
         async function loadMessages() {
             try {

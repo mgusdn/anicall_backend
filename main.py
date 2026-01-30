@@ -34,9 +34,15 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Webtoon Character Chat API")
 
 @app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    # 이제 http://127.0.0.1:8000/ 에 접속하면 templates/index.html을 보여줍니다.
-    return templates.TemplateResponse("index.html", {"request": request})
+async def home(request: Request):
+    # 이제 루트 경로는 캐릭터 선택 화면을 보여줍니다.
+    return templates.TemplateResponse("home.html", {"request": request})
+
+
+@app.get("/chat/{room_id}", response_class=HTMLResponse)
+async def chat_page(request: Request, room_id: int):
+    # /chat/1 혹은 /chat/2로 접속하면 채팅창을 보여줍니다.
+    return templates.TemplateResponse("index.html", {"request": request, "room_id": room_id})
 
 
 # --- 1. 사용자 API ---
@@ -104,15 +110,37 @@ def send_message(room_id: int, message: schemas.MessageCreate, db: Session = Dep
     # 3. OpenAI 호출
     print("OpenAI 답변 생성 중...")
     try:
+        # 1. 사용할 데이터를 함수 밖에서 미리 정의합니다.
+        char = room.character
+        
+        # 2. 시스템 메시지 내용을 변수로 미리 빼두면 코드가 훨씬 깔끔해집니다.
+        prompt_content = (
+            f"당신은 웹툰 '{char.webtoon_title}'의 캐릭터 '{char.name}'입니다.\n"
+            f"다음 정보를 바탕으로 캐릭터에 완전히 빙의해서 대화하세요.\n\n"
+            f"[프로필]\n"
+            f"- 학교: {char.school}\n"
+            f"- 나이: {char.age}세\n"
+            f"- 특징: {char.physical}, {char.bloodtype}, {char.location} 거주\n"
+            f"- 가족: {char.family}\n"
+            f"- 좋아하는 것: {char.likes}\n"
+            f"- 싫어하는 것: {char.dislikes}\n\n"
+            f"[성격 및 말투]\n"
+            f"- 성격: {char.personality}\n"
+            f"- 말투: {char.speech_style}"
+        )
+
+        # 3. 이제 함수를 호출합니다.
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": f"당신은 {room.character.name}입니다. 성격: {room.character.persona}"},
+                {"role": "system", "content": prompt_content},
                 {"role": "user", "content": message.content}
             ]
         )
+        
         ai_content = response.choices[0].message.content
-        print(f"AI 답변 완료: {ai_content}") # 답변이 잘 생성됐는지 확인
+        print(f"AI 답변 완료: {ai_content}") 
+        
     except Exception as e:
         print(f"OpenAI 에러 발생: {e}")
         raise HTTPException(status_code=500, detail="OpenAI API Error")

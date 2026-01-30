@@ -1,6 +1,6 @@
 # models.py 수정본
 
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from database import Base
@@ -20,11 +20,20 @@ class User(Base):
 
 class Character(Base):
     __tablename__ = "characters"
+
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    webtoon_title = Column(String, nullable=False)
-    persona = Column(String)
-    profile_img = Column(String)
+    name = Column(String)
+    webtoon_title = Column(String)
+    school = Column(String)
+    age = Column(Integer)
+    physical = Column(String)
+    bloodtype = Column(String)  # 추가된 필드
+    location = Column(String)
+    family = Column(String)
+    likes = Column(String)
+    dislikes = Column(String)
+    personality = Column(Text)   # 전반적인 성격 묘사
+    speech_style = Column(Text)  # 구체적인 말투 규칙
 
     rooms = relationship("ChatRoom", back_populates="character")
 

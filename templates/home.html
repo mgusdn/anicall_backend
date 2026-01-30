@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>별이삼샵 - 캐릭터 선택</title>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 30px; }
+        .char-list { display: flex; gap: 20px; justify-content: center; }
+        .char-card { padding: 20px; border: 2px solid #eee; border-radius: 15px; cursor: pointer; transition: 0.3s; width: 150px; }
+        .char-card:hover { border-color: #007bff; background: #f8fbff; transform: translateY(-5px); }
+        .char-name { font-weight: bold; font-size: 18px; margin-bottom: 10px; }
+        .char-desc { font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>누구와 대화할까요?</h1>
+        <div class="char-list">
+            <div class="char-card" onclick="location.href='/chat/1'">
+                <div class="char-name">박동</div>
+                <div class="char-desc">츤데레</div>
+            </div>
+            <div class="char-card" onclick="location.href='/chat/2'">
+                <div class="char-name">지수원</div>
+                <div class="char-desc">수줍은</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

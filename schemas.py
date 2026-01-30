@@ -22,8 +22,16 @@ class UserResponse(UserBase):
 class CharacterBase(BaseModel):
     name: str
     webtoon_title: str
-    persona: Optional[str] = None
-    profile_img: Optional[str] = None
+    school: str
+    age: int
+    physical: str
+    bloodtype: str
+    location: str
+    family: str
+    likes: str
+    dislikes: str
+    personality: str
+    speech_style: str
 
 class CharacterCreate(CharacterBase):
     pass
