@@ -13,10 +13,19 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 
+from fastapi.responses import HTMLResponse # 추가
+from fastapi.staticfiles import StaticFiles # 필요시 추가
+from fastapi.templating import Jinja2Templates # 추가
+from fastapi import Request # 추가
+
+
 # .env 파일 로드
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
+# templates 설정
+templates = Jinja2Templates(directory="templates")
 
 
 # 서버 시작 시 DB 테이블 생성
@@ -24,9 +33,11 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Webtoon Character Chat API")
 
-@app.get("/")
-def read_root():
-    return {"message": "웹툰 캐릭터 채팅 서버가 정상 작동 중입니다!"}
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    # 이제 http://127.0.0.1:8000/ 에 접속하면 templates/index.html을 보여줍니다.
+    return templates.TemplateResponse("index.html", {"request": request})
+
 
 # --- 1. 사용자 API ---
 @app.post("/api/users/signup", response_model=schemas.UserResponse)
